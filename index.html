@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PantryPal</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #1c1c1e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .section {
+            flex: 1;
+            background-color: #2c2c2e;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        h1, h2 {
+            color: #ffffff;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 8px 0;
+            border-bottom: 1px solid #3a3a3c;
+            display: flex;
+            justify-content: space-between;
+        }
+        button {
+            background-color: #0a84ff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0071e3;
+        }
+        .add-item {
+            margin-top: 20px;
+        }
+        input {
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            margin-right: 5px;
+            background-color: #3a3a3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>PantryPal</h1>
+    <div class="container">
+        <div class="section">
+            <h2>Pantry</h2>
+            <ul id="pantry-list"></ul>
+            <div class="add-item">
+                <input type="text" id="pantry-item" placeholder="Item name">
+                <input type="number" id="pantry-quantity" placeholder="Qty" min="1" value="1">
+                <button onclick="addToPantry()">Add</button>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Shopping List</h2>
+            <ul id="shopping-list"></ul>
+            <div class="add-item">
+                <input type="text" id="shopping-item" placeholder="Item name">
+                <input type="number" id="shopping-quantity" placeholder="Qty" min="1" value="1">
+                <button onclick="addToShopping()">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load data from localStorage
+        let pantry = JSON.parse(localStorage.getItem('pantry')) || [];
+        let shoppingList = JSON.parse(localStorage.getItem('shoppingList')) || [];
+
+        // Render lists
+        function renderLists() {
+            renderList('pantry-list', pantry, 'Move to Shopping', moveToShopping);
+            renderList('shopping-list', shoppingList, 'Move to Pantry', moveToPantry);
+        }
+
+        function renderList(listId, items, buttonText, moveFunction) {
+            const list = document.getElementById(listId);
+            list.innerHTML = '';
+            items.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `${item.name} (${item.quantity}) `;
+                const button = document.createElement('button');
+                button.textContent = buttonText;
+                button.onclick = () => moveFunction(index);
+                li.appendChild(button);
+                list.appendChild(li);
+            });
+        }
+
+        // Add items
+        function addToPantry() {
+            const name = document.getElementById('pantry-item').value.trim();
+            const quantity = parseInt(document.getElementById('pantry-quantity').value);
+            if (name) {
+                pantry.push({ name, quantity });
+                localStorage.setItem('pantry', JSON.stringify(pantry));
+                document.getElementById('pantry-item').value = '';
+                document.getElementById('pantry-quantity').value = '1';
+                renderLists();
+            }
+        }
+
+        function addToShopping() {
+            const name = document.getElementById('shopping-item').value.trim();
+            const quantity = parseInt(document.getElementById('shopping-quantity').value);
+            if (name) {
+                shoppingList.push({ name, quantity });
+                localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
+                document.getElementById('shopping-item').value = '';
+                document.getElementById('shopping-quantity').value = '1';
+                renderLists();
+            }
+        }
+
+        // Move items between lists
+        function moveToShopping(index) {
+            const item = pantry.splice(index, 1)[0];
+            shoppingList.push(item);
+            localStorage.setItem('pantry', JSON.stringify(pantry));
+            localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
+            renderLists();
+        }
+
+        function moveToPantry(index) {
+            const item = shoppingList.splice(index, 1)[0];
+            pantry.push(item);
+            localStorage.setItem('pantry', JSON.stringify(pantry));
+            localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
+            renderLists();
+        }
+
+        // Initial render
+        renderLists();
+    </script>
+</body>
+</html>
