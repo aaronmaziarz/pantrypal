@@ -1,0 +1,31 @@
+{
+  "name": "pantrypal",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "bootstrap": "node scripts/bootstrap.mjs",
+    "env:check": "node scripts/check-env.mjs",
+    "graph": "nx graph",
+    "lint": "nx run-many -t lint --all",
+    "test": "nx run-many -t test --all",
+    "build": "nx run-many -t build --all"
+  },
+  "engines": {
+    "node": ">=22 <23"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.5.0",
+    "eslint": "^10.1.0",
+    "nx": "^22.6.1",
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.2",
+    "vitest": "^4.1.2"
+  }
+}
