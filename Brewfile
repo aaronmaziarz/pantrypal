@@ -1,0 +1,8 @@
+brew "node@22"
+brew "openjdk@17"
+brew "cocoapods"
+brew "android-platform-tools"
+brew "supabase"
+cask "flutter"
+cask "android-studio"
+cask "docker"
